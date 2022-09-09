@@ -1,3 +1,3 @@
-Playbooks here help perform repititive administration tasks. 
+Playbooks that perform repititive administration tasks. 
 
-1. 01-filesystem.yml : This playbook creates a file-system on a Linux Partition or Logical Volume.
+1. 01-filesystem.yml : This playbook creates a play to automate partition creation and managing storage with Logical Volume Manager (LVM) and create a filesystem.

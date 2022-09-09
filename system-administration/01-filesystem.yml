@@ -1,2 +1,14 @@
 ---
-- name: Play to create a filesystem on a linux partition or linux volume group.
+- name: Play to automate partition creation and managing storage with Logical Volume Manager (LVM) and create a filesystem.
+  hosts: all
+  become: true
+  vars: 
+    device: /dev/sdc
+  tasks:
+    - name: Create Partitions
+      parted:
+        device: "{{device}}"
+        number: 1
+        flags: [ lvm ]
+        state: present
+        part_end: 15GB

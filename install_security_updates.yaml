@@ -1,0 +1,32 @@
+#
+#This will update and install only the security updates
+#
+---
+- hosts: (inventory)
+  become: yes
+  gather_facts: no
+
+  tasks:
+  - name: Gather and display available security updates
+    shell:
+      cmd: yum updateinfo list updates security
+      warn: False
+    register: result_two
+    changed_when: false
+
+  - name: Show result
+    debug:
+      msg: "{{ result_two.stdout_lines }}" #output in a human-readable format
+  
+  - name: Install available security updates
+    shell:
+      cmd: yum update --security -y
+      warn: False
+    register: result_three
+    changed_when: false
+
+  - name: Show result
+    debug:
+      msg: "{{ result_three.stdout_lines }}" #output in a human-readable format
+
+...

@@ -2,31 +2,42 @@
 #This will update and install only the security updates
 #
 ---
-- hosts: (inventory)
+- hosts: all
   become: yes
   gather_facts: no
 
   tasks:
-  - name: Gather available security updates
+  - name: Gather and display available security updates
     shell:
       cmd: yum updateinfo list updates security
-      warn: False
-    register: result_one
-    changed_when: false
-
-  - name: Show result
-    debug:
-      msg: "{{ result_one.stdout_lines }}" #output in a human-readable format
-  
-  - name: Install available security updates
-    shell:
-      cmd: yum update --security -y
       warn: False
     register: result_two
     changed_when: false
 
   - name: Show result
     debug:
-      msg: "{{ result_two.stdout_lines }}" #output in a human-readable format
+      msg: "{{ result_two.stdout_lines }}" #Output in human-readable format
+  
+  - name: Install available security updates
+    shell:
+      cmd: yum update --security -y
+      warn: False
+    register: result_three
+    changed_when: false
+
+  - name: Show result
+    debug:
+      msg: "{{ result_three.stdout_lines }}" #Output in human-readable format
+
+  - name: Check if reboot is needed on all updated servers
+    shell :
+      #Command to check if a reboot is necessary
+      cmd: needs-restarting --reboothint ; needs-restarting -r ; echo $?
+      warn: false
+    register: reboot_required_file
+    
+  - name: Show Result in a human readable format
+    debug:
+      msg: "{{reboot_required_file.stdout_lines}}"
 
 ...

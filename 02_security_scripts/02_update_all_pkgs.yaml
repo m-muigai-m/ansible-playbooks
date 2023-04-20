@@ -1,0 +1,43 @@
+#
+# This checks, lists then instals all available packages
+#
+---
+- hosts: all
+  become: yes
+  gather_facts: no
+  
+  tasks:
+  - name: Checks available updates
+    shell:
+      cmd: yum updateinfo list updates
+      warn: false
+    register: result_one
+    changed_when: false
+  
+  - name: Show Result in a human readable format
+    debug:
+      msg: "{{result_one.stdout_lines}}"
+
+  - name: Install all the available packages
+    yum:
+      name: '*'
+      state: latest
+      update_cache: yes
+      update_only: yes
+    register: yum_update_status
+  
+  - name: Show Result in a human readable format
+    debug:
+      msg: "{{ yum_update_status.results | map(attribute='name') | list }}"
+  
+  - name: Check if reboot is needed on all updated servers
+    shell :
+      #Command to check if a reboot is necessary
+      cmd: needs-restarting --reboothint ; needs-restarting -r ; echo $?
+      warn: false
+    register: reboot_required_file
+    
+  - name: Show Result in a human readable format
+    debug:
+      msg: "{{reboot_required_file.stdout_lines}}"
+...
